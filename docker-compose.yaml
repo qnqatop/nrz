@@ -1,0 +1,12 @@
+services:
+  mysql:
+    image: mysql:5.7
+    environment:
+      MYSQL_DATABASE: base
+      MYSQL_ROOT_PASSWORD: webant
+    volumes:
+      - ./docker/db/data:/var/lib/mysql:rw
+    ports:
+      - target: 3306
+        published: 33061
+        protocol: tcp
