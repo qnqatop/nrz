@@ -1,12 +1,36 @@
 services:
-  mysql:
+  mysql_nrz:
     image: mysql:5.7
     environment:
       MYSQL_DATABASE: base
       MYSQL_ROOT_PASSWORD: webant
     volumes:
-      - ./docker/db/data:/var/lib/mysql:rw
+      - ./docker/db_nrz/data:/var/lib/mysql:rw
     ports:
       - target: 3306
         published: 33061
         protocol: tcp
+
+  mysql_srz:
+    image: mysql:5.7
+    environment:
+      MYSQL_DATABASE: base
+      MYSQL_ROOT_PASSWORD: webant
+    volumes:
+      - ./docker/db_srz/data:/var/lib/mysql:rw
+    ports:
+      - target: 3306
+        published: 33062
+        protocol: tcp
+
+  redis:
+    image: redis:6-alpine
+    restart: always
+    ports:
+      - '6379:6379'
+    volumes:
+      - /docker/redis/cache:/data
+    environment:
+      REDIS_HOST: cache
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ''
