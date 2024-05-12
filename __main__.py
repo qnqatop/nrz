@@ -1,11 +1,11 @@
 import time
-import app.service.sync as sync
+from app.service import nrz,srz
 
 
 def sync_rabota_zernovozam():
     while True:
-        sync.nrz_scaner()
-        sync.srz_scaner()
+        nrz.nrz_scaner()
+        srz.srz_scaner()
         time.sleep(10)
 
 
