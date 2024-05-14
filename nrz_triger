@@ -19,3 +19,12 @@ BEGIN
 END$$
 
 DELIMITER ;
+
+
+    '''
+    CREATE USER 'all'@'%' IDENTIFIED BY 'webant';
+
+    GRANT ALL PRIVILEGES ON *.* TO 'all'@'%' WITH GRANT OPTION;
+
+    FLUSH PRIVILEGES;
+    '''

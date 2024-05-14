@@ -2,7 +2,7 @@ import app.config.db.db_connection as conn
 from app.model.srz_model.user_model import UserSRZ as srz_user
 from app.model.nrz_model.triger_table import TriggerTable
 from app.dto.user import srz_to_nrz
-
+import os
 
 def srz_scaner():
     """
@@ -10,16 +10,9 @@ def srz_scaner():
     :return:
     """
 
-    '''
-    CREATE USER 'all'@'%' IDENTIFIED BY 'webant';
-
-    GRANT ALL PRIVILEGES ON *.* TO 'all'@'%' WITH GRANT OPTION;
-
-    FLUSH PRIVILEGES;
-    '''
-    nrz = conn.MysqlConnection(host='127.0.0.1', port=33061, user='root', password='webant', base='base')
-    redis = conn.RedisConnection(host='127.0.0.1', port=6379, db=0)
-    srz = conn.MysqlConnection(host='127.0.0.1', port=33062, user='superuser', password='webant', base='base')
+    nrz = conn.MysqlConnection(host=os.environ.get('NRZ_HOST'), port=os.environ.get('NRZ_PORT'), user=os.environ.get('NRZ_USER'), password=os.environ.get('NRZ_PASS'), base=os.environ.get('NRZ_BASE'))
+    redis = conn.RedisConnection(host=os.environ.get('REDIS_HOST'), port=os.environ.get('REDIS_PORT'), db=os.environ.get('REDIS_DB'))
+    srz = conn.MysqlConnection(host=os.environ.get('SRZ_HOST'), port=os.environ.get('SRZ_PORT'), user=os.environ.get('SRZ_USER'), password=os.environ.get('SRZ_PASS'), base=os.environ.get('SRZ_BASE'))
 
     new_rows = srz.get_by_table_and_no_sync(TriggerTable, 'users')
 
@@ -44,13 +37,3 @@ def srz_scaner():
             nrz_user_dto = srz_to_nrz(user, occupation_id, confirm_id)
             create_srz_to_nrz_user = nrz.create_record(nrz_user_dto)
             redis.add(f'user_srz_to_nrz_{create_srz_to_nrz_user.id}', user.id)
-
-            # INSERT
-            # INTO
-            # users(login, password, last_in, name, admin, activ, generate, isProvider, role, confirm, company, email,
-            #       skype, occupation, status_id, balance, status_expiry, show_nat_services, working_with_nds, company_id,
-            #       place, place_code, region, region_code, rating, has_docs, forum_blocked, forum_block_expiry,
-            #       token_http)
-            # VALUES('+79876543210', 'f5bb0c8de146c67b44babbf4e6584cc0', '2024-05-04 15:59:37', 'Иванов Иван', 1, 1, NULL,
-            #        0, 0, 1, 'PortTranzit', NULL, NULL, 4, 1, 0, NULL, 1, 0, 0, NULL, NULL, NULL, NULL, 5, 0, 0, NULL,
-            #        'token');

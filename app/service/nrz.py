@@ -3,16 +3,17 @@ from app.model.nrz_model.user_model import UserNRZ as nrz_user, UserOccupation a
     UserConfirmStatus as nrz_user_confirm_status
 from app.model.nrz_model.triger_table import TriggerTable
 from app.dto.user import nrz_to_srz
-
+import os
 
 def nrz_scaner():
     """
     просмотр новых таблиц из НРЗ
     :return:
     """
-    nrz = conn.MysqlConnection(host='127.0.0.1', port=33061, user='root', password='webant', base='base')
-    redis = conn.RedisConnection(host='127.0.0.1', port=6379, db=0)
-    srz = conn.MysqlConnection(host='127.0.0.1', port=33062, user='superuser', password='webant', base='base')
+    nrz = conn.MysqlConnection(host=os.environ.get('NRZ_HOST'), port=os.environ.get('NRZ_PORT'), user=os.environ.get('NRZ_USER'), password=os.environ.get('NRZ_PASS'), base=os.environ.get('NRZ_BASE'))
+    redis = conn.RedisConnection(host=os.environ.get('REDIS_HOST'), port=os.environ.get('REDIS_PORT'), db=os.environ.get('REDIS_DB'))
+    srz = conn.MysqlConnection(host=os.environ.get('SRZ_HOST'), port=os.environ.get('SRZ_PORT'), user=os.environ.get('SRZ_USER'), password=os.environ.get('SRZ_PASS'), base=os.environ.get('SRZ_BASE'))
+
     new_rows = nrz.get_by_table_and_no_sync(TriggerTable, 'users')
 
     for row in new_rows:

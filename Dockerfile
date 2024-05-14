@@ -1,20 +1,15 @@
-# Используем официальный образ Python в качестве базового
+FROM python:3.12 AS builder
+COPY requirements.txt .
+
+RUN pip install --user -r requirements.txt
+
+
 FROM python:3.12-slim
+WORKDIR /code
 
-# Устанавливаем рабочую директорию внутри контейнера
-WORKDIR /app
+COPY --from=builder /root/.local /root/.local
+COPY ./app ./app
+COPY __main__.py .
+ENV PATH=/root/.local:$PATH
 
-# Копируем файлы проекта в контейнер
-COPY . /app
-
-# Устанавливаем зависимости
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Устанавливаем переменные среды (при необходимости)
-# ENV VARIABLE_NAME=value
-
-# Открываем порт для приложения (если необходимо)
-# EXPOSE 8000
-
-# Устанавливаем команду для запуска приложения
-CMD ["python", "__main__.py"]
+CMD ["python","-u","./__main__.py"]

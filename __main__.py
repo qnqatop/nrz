@@ -2,10 +2,12 @@ import time
 from app.service import nrz,srz
 
 
+
 def sync_rabota_zernovozam():
     while True:
         nrz.nrz_scaner()
         srz.srz_scaner()
+        print('спим')
         time.sleep(10)
 
 
