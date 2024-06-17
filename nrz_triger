@@ -20,6 +20,50 @@ END$$
 
 DELIMITER ;
 
+DELIMITER $$
+
+CREATE TRIGGER after_subscription_insert
+AFTER INSERT
+ON applications
+FOR EACH ROW
+BEGIN
+    INSERT INTO `change_logs` (trigger_name, table_name, record_id, is_synced)
+    VALUES ('after_subscriptions_insert', 'subscriptions', NEW.id, FALSE);
+END$$
+
+DELIMITER ;
+
+
+DELIMITER //
+
+CREATE TRIGGER before_update_subscriptions
+BEFORE UPDATE ON applications
+FOR EACH ROW
+BEGIN
+    IF OLD.old_id = NEW.old_id THEN
+        INSERT INTO `change_logs` (trigger_name, table_name, record_id, is_synced)
+        VALUES ('before_update_subscriptions', 'subscriptions', NEW.id, FALSE);
+    END IF;
+END //
+
+DELIMITER ;
+
+
+
+DELIMITER //
+
+CREATE TRIGGER before_update_users
+BEFORE UPDATE ON users
+FOR EACH ROW
+BEGIN
+    IF OLD.old_id = NEW.old_id THEN
+        INSERT INTO `change_logs` (trigger_name, table_name, record_id, is_synced)
+        VALUES ('before_update_users', 'users', NEW.id, FALSE);
+    END IF;
+END //
+
+DELIMITER ;
+
 
     '''
     CREATE USER 'all'@'%' IDENTIFIED BY 'webant';
@@ -28,3 +72,5 @@ DELIMITER ;
 
     FLUSH PRIVILEGES;
     '''
+
+
