@@ -3,8 +3,10 @@ from app.model.srz_model.user_model import UserSRZ
 from datetime import datetime
 
 
-def nrz_to_srz(nrz_user: UserNRZ, nrz_user_occup: UserOccupation, nrz_user_confirm: UserConfirmStatus) -> UserSRZ:
+def nrz_to_srz(nrz_user: UserNRZ, nrz_user_occup: UserOccupation, nrz_user_confirm: UserConfirmStatus,update = False) -> UserSRZ:
     srz_user = UserSRZ()
+    if update:
+        srz_user.id = nrz_user.old_id
     srz_user.login = nrz_user.phone
     srz_user.password = nrz_user.password
     srz_user.last_in = nrz_user.online_at
@@ -46,11 +48,19 @@ def nrz_to_srz(nrz_user: UserNRZ, nrz_user_occup: UserOccupation, nrz_user_confi
     return srz_user
 
 
-def srz_to_nrz(srz_user: UserSRZ, ocuppation_id, confirm_status_id, ) -> UserNRZ:
+def srz_to_nrz(srz_user: UserSRZ, ocuppation_id , confirm_status_id, update_status = False) -> UserNRZ:
+
+
     nrz_user = UserNRZ()
     nrz_user.phone = srz_user.login
-    nrz_user.last_name = srz_user.name.split(' ')[0]
-    nrz_user.first_name = srz_user.name.split(' ')[1]
+    if update_status:
+        nrz_user.id = srz_user.old_id
+    try:
+        nrz_user.last_name = srz_user.name.split(' ')[0]
+        nrz_user.first_name = srz_user.name.split(' ')[1]
+    except:
+        nrz_user.last_name = " "
+        nrz_user.first_name = " "
     nrz_user.occupation_id = ocuppation_id
     nrz_user.organization_name = srz_user.company
     nrz_user.is_verified_organization = False
